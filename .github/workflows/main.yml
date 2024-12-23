@@ -8,34 +8,57 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       # Step 1: Checkout the code from GitHub
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       # Step 2: Set up Node.js
-      - uses: actions/setup-node@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: "22" # Specify your Node.js version
 
       # Step 3: Install dependencies
-      - run: npm install
+      - name: Install dependencies
+        run: npm install
 
-      # Step 5: Set up AWS CLI
-      - uses: aws-actions/configure-aws-credentials@v1
+      # Step 4: Run TypeScript build (compile TS to JS)
+      - name: Build TypeScript
+        run: npm run build # Ensure you have a "build" script in package.json
+
+      - name: Zip Lambda function
+        run: |
+          zip -r lambda.zip src/handler.js node_modules package.json package-lock.json
+
+      # Step 5: Set up AWS CLI credentials (with GitHub secrets)
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "us-east-1" # Replace with your AWS region
+          aws-region: "us-east-1" # Specify your AWS region
 
       # Step 6: Install Terraform
-      - run: |
+      - name: Install Terraform
+        run: |
           curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
           sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"
           sudo apt-get update && sudo apt-get install terraform
 
-      # Step 7: Terraform Initialization and Apply
-      - run: |
-          cd terraform
-          terraform init
-          terraform plan -out=tfplan
-          terraform apply -auto-approve tfplan
+      # Step 7: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 8: Validate the Terraform configuration (optional but recommended)
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Step 9: Plan Terraform execution
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      # Step 10: Apply Terraform changes to deploy infrastructure
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
