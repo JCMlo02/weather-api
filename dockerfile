@@ -16,6 +16,5 @@ WORKDIR /
 COPY package.json ${LAMBDA_TASK_ROOT}
 COPY --from=builder /usr/app/dist/ ${LAMBDA_TASK_ROOT}/
 COPY --from=builder /usr/app/node_modules/ ${LAMBDA_TASK_ROOT}/node_modules/
-RUN npm prune --legacy-peer-deps
 # Ensure the handler function is correctly defined in the Lambda environment
 CMD ["index.handler"]
