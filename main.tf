@@ -193,8 +193,7 @@ resource "aws_lambda_permission" "allow_api_gateway" {
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
   function_name = aws_lambda_function.weather_api.function_name
-  source_arn = "${aws_api_gateway_rest_api.weather_api.execution_arn}/*"
-  # Explicitly specify the dependency on the Lambda function
+  source_arn    = "${aws_api_gateway_rest_api.weather_api.execution_arn}/prod/*"
   depends_on = [aws_lambda_function.weather_api]
 }
 
