@@ -173,7 +173,7 @@ resource "aws_api_gateway_rest_api_policy" "weather_api_policy" {
         Action    = "execute-api:Invoke"
         Effect    = "Allow"
         Principal = "*"
-        Resource  = "arn:aws:apigateway:us-east-1::/restapis/${aws_api_gateway_rest_api.weather_api.id}/*"
+        Resource  = "arn:aws:apigateway:us-east-1::/restapis/${aws_api_gateway_rest_api.weather_api.id}/prod/*"
       }
     ]
   })
