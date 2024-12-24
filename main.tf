@@ -59,6 +59,22 @@ resource "aws_iam_role" "lambda_execution" {
       }
     ]
   })
+
+  }
+  
+  resource "aws_iam_role_policy" "lambda_s3_policy" {
+    name   = "lambda_s3_policy"
+    role   = aws_iam_role.lambda_execution.id
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = "s3:GetObject"
+          Effect = "Allow"
+          Resource = "arn:aws:s3:::weather-project-data-bucket/*"
+        }
+      ]
+    })
 }
 
 resource "aws_api_gateway_rest_api" "weather_api" {
@@ -78,7 +94,7 @@ resource "aws_api_gateway_method" "get_weather" {
   http_method   = "GET"
   authorization = "NONE"
 }
-
+data "aws_region" "current" {}
 resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = aws_api_gateway_rest_api.weather_api.id
   resource_id             = aws_api_gateway_resource.weather_resource.id
@@ -92,12 +108,15 @@ resource "aws_lambda_permission" "allow_api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
-  function_name = aws_lambda_function.weather_api.function_name
+  function_name = "${aws_lambda_function.weather_api.arn}"
 }
 
 resource "aws_api_gateway_deployment" "weather_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.weather_api.id
-  depends_on  = [aws_api_gateway_integration.lambda_integration]
+  depends_on  = [
+    aws_api_gateway_integration.lambda_integration,
+    aws_lambda_permission.allow_api_gateway
+  ]
 }
 
 data "aws_region" "current" {}
