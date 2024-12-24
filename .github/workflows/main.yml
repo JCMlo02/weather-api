@@ -43,7 +43,6 @@ jobs:
         run: |
           docker build -t ${{ secrets.ECR_REPOSITORY }} .
           docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
-          docker run --rm ${{ secrets.ECR_REPOSITORY }}:latest ls -al /var/task
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
 
       - name: Install Terraform
