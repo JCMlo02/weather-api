@@ -69,7 +69,10 @@ resource "aws_iam_role" "lambda_execution" {
       Version = "2012-10-17"
       Statement = [
         {
-          Action = "s3:GetObject"
+          Action = [
+            "s3:GetObject",
+            "s3:PutObject"
+          ]
           Effect = "Allow"
           Resource = "arn:aws:s3:::weather-project-data-bucket/*"
         }
@@ -109,6 +112,7 @@ resource "aws_lambda_permission" "allow_api_gateway" {
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
   function_name = aws_lambda_function.weather_api.function_name
+  source_arn = "${aws_api_gateway_rest_api.weather_api.execution_arn}/*"
   # Explicitly specify the dependency on the Lambda function
   depends_on = [aws_lambda_function.weather_api]
 }
