@@ -118,6 +118,8 @@ resource "aws_api_gateway_integration_response" "get_weather_integration_respons
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
+
+  depends_on = [aws_api_gateway_integration.lambda_integration]
 }
 resource "aws_api_gateway_method" "options_weather" {
   rest_api_id   = aws_api_gateway_rest_api.weather_api.id
@@ -158,6 +160,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
     "method.response.header.Access-Control-Allow-Headers"     = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
     "method.response.header.Access-Control-Allow-Methods"     = "'OPTIONS,GET'"
   }
+  depends_on = [aws_api_gateway_integration.options_integration]
 }
 
 resource "aws_api_gateway_integration" "lambda_integration" {
