@@ -108,7 +108,10 @@ resource "aws_lambda_permission" "allow_api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
-  function_name = "${aws_lambda_function.weather_api.arn}"
+  function_name = aws_lambda_function.weather_api.function_name
+
+  # Explicitly specify the dependency on the Lambda function
+  depends_on = [aws_lambda_function.weather_api]
 }
 
 resource "aws_api_gateway_deployment" "weather_api_deployment" {
