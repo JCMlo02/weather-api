@@ -101,15 +101,14 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   http_method             = aws_api_gateway_method.get_weather.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${aws_lambda_function.weather_api.arn}/invocations"
-}
+  uri                     = aws_lambda_function.weather_api.invoke_arn
+  }
 
 resource "aws_lambda_permission" "allow_api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
   function_name = aws_lambda_function.weather_api.function_name
-
   # Explicitly specify the dependency on the Lambda function
   depends_on = [aws_lambda_function.weather_api]
 }
