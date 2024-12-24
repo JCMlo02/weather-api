@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020", // Use ES2020 to leverage modern JavaScript features (e.g., async/await, etc.)
-    "module": "CommonJS", // Use ES module system
+    "module": "ES2020", // Use ES module system
     "moduleResolution": "node", // Resolve modules the same way Node.js does
     "outDir": "./dist", // Output the transpiled code to the dist folder
     "rootDir": "./src", // Your source code is in the src folder
