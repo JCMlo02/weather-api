@@ -4,7 +4,7 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 
-const handler = async (event: { location: string }) => {
+export const handler = async (event: { location: string }) => {
   const location = event.location;
   const apiKey = process.env.API_KEY;
 
@@ -52,5 +52,3 @@ const handler = async (event: { location: string }) => {
     return response;
   }
 };
-
-export default handler;
