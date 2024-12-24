@@ -98,6 +98,68 @@ resource "aws_api_gateway_method" "get_weather" {
   authorization = "NONE"
 }
 
+resource "aws_api_gateway_method_response" "get_weather_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.weather_api.id
+  resource_id = aws_api_gateway_resource.weather_resource.id
+  http_method = aws_api_gateway_method.get_weather.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "get_weather_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.weather_api.id
+  resource_id = aws_api_gateway_resource.weather_resource.id
+  http_method = aws_api_gateway_method.get_weather.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+}
+resource "aws_api_gateway_method" "options_weather" {
+  rest_api_id   = aws_api_gateway_rest_api.weather_api.id
+  resource_id   = aws_api_gateway_resource.weather_resource.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "options_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.weather_api.id
+  resource_id             = aws_api_gateway_resource.weather_resource.id
+  http_method             = aws_api_gateway_method.options_weather.http_method
+  integration_http_method = "OPTIONS"
+  type                    = "MOCK"
+}
+
+resource "aws_api_gateway_method_response" "options_method_response" {
+  rest_api_id = aws_api_gateway_rest_api.weather_api.id
+  resource_id = aws_api_gateway_resource.weather_resource.id
+  http_method = aws_api_gateway_method.options_weather.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"      = true
+    "method.response.header.Access-Control-Allow-Headers"     = true
+    "method.response.header.Access-Control-Allow-Methods"     = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "options_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.weather_api.id
+  resource_id = aws_api_gateway_resource.weather_resource.id
+  http_method = aws_api_gateway_method.options_weather.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"      = "'*'"
+    "method.response.header.Access-Control-Allow-Headers"     = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Methods"     = "'OPTIONS,GET'"
+  }
+}
+
 resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = aws_api_gateway_rest_api.weather_api.id
   resource_id             = aws_api_gateway_resource.weather_resource.id
@@ -119,9 +181,14 @@ resource "aws_lambda_permission" "allow_api_gateway" {
 
 resource "aws_api_gateway_deployment" "weather_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.weather_api.id
-    depends_on  = [
+  depends_on  = [
     aws_api_gateway_integration.lambda_integration,
-    aws_lambda_permission.allow_api_gateway
+    aws_api_gateway_method.options_weather,
+    aws_api_gateway_method.get_weather,
+    aws_api_gateway_integration_response.options_integration_response,
+    aws_api_gateway_integration_response.get_weather_integration_response,
+    aws_api_gateway_method_response.options_method_response,
+    aws_api_gateway_method_response.get_weather_method_response
   ]
 }
 
