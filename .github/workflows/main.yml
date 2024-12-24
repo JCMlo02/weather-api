@@ -10,55 +10,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code from GitHub
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "22" # Specify your Node.js version
+          node-version: "16" #
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Run TypeScript build (compile TS to JS)
       - name: Build TypeScript
-        run: npm run build # Ensure you have a "build" script in package.json
+        run: npm run build
 
-      - name: Zip Lambda function
+      - name: Set up AWS CLI and Docker
         run: |
-          zip -r lambda.zip src/handler.js node_modules package.json package-lock.json
+          sudo apt-get update
+          sudo apt-get install -y awscli docker.io
+          aws --version
+          docker --version
 
-      # Step 5: Set up AWS CLI credentials (with GitHub secrets)
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "us-east-1" # Specify your AWS region
 
-      # Step 6: Install Terraform
+          aws-region: "us-east-1"
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.ECR_REPOSITORY }} .
+
+      - name: Tag Docker image
+        run: |
+          docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+
       - name: Install Terraform
         run: |
           curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
           sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"
           sudo apt-get update && sudo apt-get install terraform
 
-      # Step 7: Initialize Terraform
       - name: Terraform Init
         run: terraform init
 
-      # Step 8: Validate the Terraform configuration (optional but recommended)
       - name: Terraform Validate
         run: terraform validate
 
-      # Step 9: Plan Terraform execution
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      # Step 10: Apply Terraform changes to deploy infrastructure
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
