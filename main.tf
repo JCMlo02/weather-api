@@ -5,8 +5,7 @@ provider "aws" {
 resource "aws_lambda_function" "weather_api" {
   function_name = "weather-api"
   role          = aws_iam_role.lambda_execution.arn
-  handler       = "src.handler"
-  runtime       = "nodejs16.x"
+  package_type = "Image"
   environment {
     variables = {
       OPENWEATHER_API_KEY = "LbNfnyihODYUT7fBSN0TQ621penUNIT1"
@@ -41,7 +40,7 @@ resource "aws_iam_policy" "lambda_ecr_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_ecr_attachment" {
-  role       = aws_iam_role.lambda_exec.name
+  role       = aws_iam_role.lambda_execution.name
   policy_arn = aws_iam_policy.lambda_ecr_policy.arn
 }
 
