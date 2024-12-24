@@ -94,7 +94,7 @@ resource "aws_api_gateway_resource" "weather_resource" {
 resource "aws_api_gateway_method" "get_weather" {
   rest_api_id   = aws_api_gateway_rest_api.weather_api.id
   resource_id   = aws_api_gateway_resource.weather_resource.id
-  http_method   = "GET"
+  http_method   = "POST"
   authorization = "NONE"
 }
 
