@@ -163,6 +163,22 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   depends_on = [aws_api_gateway_integration.options_integration]
 }
 
+resource "aws_api_gateway_rest_api_policy" "weather_api_policy" {
+  rest_api_id = aws_api_gateway_rest_api.weather_api.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "execute-api:Invoke"
+        Effect    = "Allow"
+        Principal = "*"
+        Resource  = "arn:aws:apigateway:us-east-1::/restapis/${aws_api_gateway_rest_api.weather_api.id}/*"
+      }
+    ]
+  })
+}
+
 resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = aws_api_gateway_rest_api.weather_api.id
   resource_id             = aws_api_gateway_resource.weather_resource.id
