@@ -1,24 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES2020",                       // Use ES2020 to leverage modern JavaScript features (e.g., async/await, etc.)
-    "module": "ES2020",                       // Use ES module system
-    "moduleResolution": "node",               // Resolve modules the same way Node.js does
-    "outDir": "./dist",                       // Output the transpiled code to the dist folder
-    "rootDir": "./src",                       // Your source code is in the src folder
-    "esModuleInterop": true,                  // Enable compatibility with commonjs modules
-    "skipLibCheck": true,                     // Skip type checking of declaration files (speeds up compilation)
+    "target": "ES2020", // Use ES2020 to leverage modern JavaScript features (e.g., async/await, etc.)
+    "module": "CommonJS", // Use ES module system
+    "moduleResolution": "node", // Resolve modules the same way Node.js does
+    "outDir": "./dist", // Output the transpiled code to the dist folder
+    "rootDir": "./src", // Your source code is in the src folder
+    "esModuleInterop": true, // Enable compatibility with commonjs modules
+    "skipLibCheck": true, // Skip type checking of declaration files (speeds up compilation)
     "forceConsistentCasingInFileNames": true, // Ensure consistent file naming
-    "strict": true,                           // Enable strict type checking
-    "resolveJsonModule": true,                // Allow importing JSON files (if you need it)
-    "allowSyntheticDefaultImports": true,     // Allow synthetic default imports (helps with compatibility)
-    "lib": ["ES2020", "DOM"],                 // Add DOM lib for fetch, etc. (optional depending on usage)
-    "noEmitOnError": true                     // Don't output anything if there are TypeScript errors
+    "strict": true, // Enable strict type checking
+    "resolveJsonModule": true, // Allow importing JSON files (if you need it)
+    "allowSyntheticDefaultImports": true, // Allow synthetic default imports (helps with compatibility)
+    "lib": ["ES2020", "DOM"], // Add DOM lib for fetch, etc. (optional depending on usage)
+    "noEmitOnError": true // Don't output anything if there are TypeScript errors
   },
   "include": [
-    "src/**/*"                                // Include all files in the src directory
+    "src/**/*" // Include all files in the src directory
   ],
   "exclude": [
-    "node_modules",                           // Exclude node_modules
-    "dist"                                    // Exclude the dist directory
+    "node_modules", // Exclude node_modules
+    "dist" // Exclude the dist directory
   ]
 }
