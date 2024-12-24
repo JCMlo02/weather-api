@@ -115,11 +115,17 @@ resource "aws_lambda_permission" "allow_api_gateway" {
 
 resource "aws_api_gateway_deployment" "weather_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.weather_api.id
-  stage_description = "prod"
-  depends_on  = [
+    depends_on  = [
     aws_api_gateway_integration.lambda_integration,
     aws_lambda_permission.allow_api_gateway
   ]
+}
+
+resource "aws_api_gateway_stage" "weather_api_stage" {
+  stage_name    = "prod"
+  rest_api_id   = aws_api_gateway_rest_api.weather_api.id
+  deployment_id = aws_api_gateway_deployment.weather_api_deployment.id
+  
 }
 
 output "api_url" {
