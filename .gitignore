@@ -13,7 +13,7 @@
 
 # Terraform backup files
 *.bak
-
+dist
 .env
 
 # Terraform plugin directory
