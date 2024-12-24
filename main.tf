@@ -8,7 +8,7 @@ resource "aws_lambda_function" "weather_api" {
   package_type = "Image"
   environment {
     variables = {
-      OPENWEATHER_API_KEY = "LbNfnyihODYUT7fBSN0TQ621penUNIT1"
+      API_KEY = "LbNfnyihODYUT7fBSN0TQ621penUNIT1"
     }
   }
   image_uri     = "${aws_ecr_repository.lambda_repo.repository_url}:latest"
