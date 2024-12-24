@@ -94,14 +94,14 @@ resource "aws_api_gateway_method" "get_weather" {
   http_method   = "GET"
   authorization = "NONE"
 }
-data "aws_region" "current" {}
+
 resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = aws_api_gateway_rest_api.weather_api.id
   resource_id             = aws_api_gateway_resource.weather_resource.id
   http_method             = aws_api_gateway_method.get_weather.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${aws_lambda_function.weather_api.arn}/invocations"
+  uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${aws_lambda_function.weather_api.arn}/invocations"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway" {
@@ -119,10 +119,8 @@ resource "aws_api_gateway_deployment" "weather_api_deployment" {
   ]
 }
 
-data "aws_region" "current" {}
-
 output "api_url" {
-  value = "https://${aws_api_gateway_rest_api.weather_api.id}.execute-api.${data.aws_region.current.name}.amazonaws.com/prod/weather"
+  value = "https://${aws_api_gateway_rest_api.weather_api.id}.execute-api.us-east-1.amazonaws.com/prod/weather"
 }
 
 # Use your manually created S3 bucket
