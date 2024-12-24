@@ -24,14 +24,9 @@ jobs:
       - name: Build TypeScript
         run: npm run build
 
-      - name: Set up AWS CLI and Docker
+      - name: update
         run: |
           sudo apt-get update
-          sudo apt-get install -y unzip curl
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-          aws --version
 
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
