@@ -3,9 +3,14 @@ import {
   GetObjectCommand,
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
+import { APIGatewayEvent } from "aws-lambda";
 
-export const handler = async (event: { location: string }) => {
-  const location = event.location;
+export const handler = async (event: APIGatewayEvent) => {
+  let location;
+  if (event.body) {
+    let parsedObj = JSON.parse(event.body);
+    location = parsedObj.location || "Charlotte";
+  }
   const apiKey = process.env.API_KEY;
 
   const url = `https://api.tomorrow.io/v4/weather/forecast?location=${location}&timesteps=1d&apikey=${apiKey}`;
