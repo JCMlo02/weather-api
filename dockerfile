@@ -5,7 +5,7 @@ FROM public.ecr.aws/lambda/nodejs:16
 WORKDIR /var/task
 
 # Step 3: Copy package.json and package-lock.json first to leverage Docker cache
-COPY package*.json ./
+COPY package.json ./
 
 # Step 4: Install dependencies
 RUN npm install
