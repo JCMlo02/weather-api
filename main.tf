@@ -105,7 +105,9 @@ resource "aws_api_gateway_method_response" "get_weather_method_response" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"      = true
+    "method.response.header.Access-Control-Allow-Headers"     = true
+    "method.response.header.Access-Control-Allow-Methods"     = true
   }
 }
 
@@ -117,6 +119,8 @@ resource "aws_api_gateway_integration_response" "get_weather_integration_respons
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Headers"     = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Methods"     = "'POST,OPTIONS'"
   }
 
   depends_on = [aws_api_gateway_integration.lambda_integration]
@@ -167,16 +171,16 @@ resource "aws_api_gateway_rest_api_policy" "weather_api_policy" {
   rest_api_id = aws_api_gateway_rest_api.weather_api.id
 
   policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action    = "execute-api:Invoke"
-        Effect    = "Allow"
-        Principal = "*"
-        Resource  = "arn:aws:apigateway:us-east-1::/restapis/${aws_api_gateway_rest_api.weather_api.id}/prod/*"
-      }
-    ]
-  })
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "execute-api:Invoke",
+      "Resource": "arn:aws:execute-api:us-east-1:788228759732:6liw8ik1wf/*"
+    }
+  ]
+})
 }
 
 resource "aws_api_gateway_integration" "lambda_integration" {
@@ -193,7 +197,7 @@ resource "aws_lambda_permission" "allow_api_gateway" {
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
   function_name = aws_lambda_function.weather_api.function_name
-  source_arn    = "${aws_api_gateway_rest_api.weather_api.execution_arn}/prod/*"
+  source_arn    = "${aws_api_gateway_rest_api.weather_api.execution_arn}/*"
   depends_on = [aws_lambda_function.weather_api]
 }
 
