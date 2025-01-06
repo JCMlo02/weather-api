@@ -138,6 +138,13 @@ resource "aws_api_gateway_integration" "options_integration" {
   http_method             = aws_api_gateway_method.options_weather.http_method
   integration_http_method = "OPTIONS"
   type                    = "MOCK"
+    request_templates = {
+    "application/json" = jsonencode(
+      {
+        statusCode = 200
+      }
+    )
+  }
 }
 
 resource "aws_api_gateway_method_response" "options_method_response" {
