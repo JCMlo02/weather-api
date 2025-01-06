@@ -46,7 +46,7 @@ export const handler = async (event: APIGatewayEvent) => {
       },
     });
 
-    const response = request.json();
+    const response = await request.json();
 
     const sendObject = new PutObjectCommand({
       Bucket: bucket,
