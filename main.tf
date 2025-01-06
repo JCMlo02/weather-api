@@ -162,7 +162,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"      = "'*'"
     "method.response.header.Access-Control-Allow-Headers"     = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
-    "method.response.header.Access-Control-Allow-Methods"     = "'OPTIONS,GET'"
+    "method.response.header.Access-Control-Allow-Methods"     = "'OPTIONS,POST'"
   }
   depends_on = [aws_api_gateway_integration.options_integration]
 }
@@ -195,7 +195,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
 resource "aws_lambda_permission" "allow_api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  principal     = "apigateway.amazonaws.com"
+  principal     = "*"
   function_name = aws_lambda_function.weather_api.function_name
   source_arn    = "${aws_api_gateway_rest_api.weather_api.execution_arn}/*"
   depends_on = [aws_lambda_function.weather_api]
