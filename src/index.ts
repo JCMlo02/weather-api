@@ -107,6 +107,11 @@ export const handler = async (event: APIGatewayEvent) => {
     console.error("API_KEY environment variable is not set");
     return {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST",
+      },
       body: JSON.stringify({
         error: "API_KEY environment variable is missing",
       }),
@@ -118,6 +123,11 @@ export const handler = async (event: APIGatewayEvent) => {
     const weatherData = await getWeatherFromS3(location);
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST",
+      },
       body: JSON.stringify(weatherData),
     };
   } catch (s3Error) {
@@ -130,6 +140,11 @@ export const handler = async (event: APIGatewayEvent) => {
 
       return {
         statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "OPTIONS,POST",
+        },
         body: JSON.stringify(freshWeatherData),
       };
     } catch (apiError) {
@@ -137,6 +152,11 @@ export const handler = async (event: APIGatewayEvent) => {
       console.error("Error handling the request", apiError);
       return {
         statusCode: 500,
+        headers: {
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "OPTIONS,POST",
+        },
         body: JSON.stringify({ error: "Unable to fetch weather data" }),
       };
     }
